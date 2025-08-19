@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 // Define DataSchema
 const DataSchema = new mongoose.Schema(
   {
-    profilePicture: { type: String, required: true },
+    profilePicture: { type: String },
     fullName: { type: String, required: true },
     dob: { type: String },
     email: { type: String, required: true },
@@ -15,6 +15,7 @@ const DataSchema = new mongoose.Schema(
       default: "active",
     },
     phone: { type: String },
+    faceDescriptor: { type: [Number], default: [] },
     teamId: { type: mongoose.Schema.Types.ObjectId, required: true },
   },
   { versionKey: false, timestamps: true }

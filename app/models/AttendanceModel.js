@@ -3,12 +3,11 @@ import mongoose from "mongoose";
 // Define DataSchema
 const DataSchema = new mongoose.Schema(
   {
-    studentName: { type: String, required: true },
-    team: { type: String, required: true },
-    time: { type: String, required: true },
-    status: { type: String, enum: ["Present", "Absent"], required: true },
+    studentId: { type: mongoose.Schema.Types.ObjectId, required: true },
+    teamId: { type: mongoose.Schema.Types.ObjectId, required: true },
+    status: { type: String, enum: ["present", "absent"], required: true },
     gps: { type: Boolean, required: true },
-    faceMath: { type: String, required: true },
+    faceMatch: { type: Boolean, required: true },
   },
   { versionKey: false, timestamps: true }
 );

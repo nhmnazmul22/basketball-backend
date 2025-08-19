@@ -1,19 +1,35 @@
 import express from "express";
 import * as TeamController from "../app/controllers/TeamController.js";
 import * as UserController from "../app/controllers/UserController.js";
+import * as AttendanceController from "../app/controllers/AttendanceController.js";
 import { upload } from "../app/middleware/UploadMiddleware.js";
 
 // === Initial Express Router ===
 const router = express.Router();
 
 // User Routes
-router.post("/create-user", UserController.CreateUserController);
+router.post(
+  "/create-user",
+  upload.single("image"),
+  UserController.CreateUserController
+);
 router.post("/login", UserController.LoginUserController);
 router.get("/users", UserController.GetAllUserController);
 router.get("/user/:userId", UserController.GetUserByIdController);
-router.put("/update-user/:userId", UserController.UpdateUserController);
+router.put(
+  "/update-user/:userId",
+  upload.single("image"),
+  UserController.UpdateUserController
+);
 router.delete("/delete-user/:userId", UserController.DeleteUserController);
 router.post("/forgot-password", UserController.ForgotUserPasswordController);
+
+// Attendance Route
+router.post(
+  "/create-attendance",
+  upload.single("image"),
+  AttendanceController.CreateAttendanceController
+);
 
 // Team Routes
 router.post(

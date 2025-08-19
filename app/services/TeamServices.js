@@ -3,14 +3,12 @@ import TeamModel from "../models/TeamModel.js";
 import path from "path";
 
 export const CreateTeamService = async (req) => {
-  try {
-    const image = req.file;
-    const body = req.body;
-    const { name } = body;
-    const imagePath = image
-      ? path.join("uploads/images", image.filename)
-      : null;
+  const image = req.file;
+  const body = req.body;
+  const { name } = body;
+  const imagePath = image ? path.join("uploads/images", image.filename) : null;
 
+  try {
     if (!image) {
       return {
         status: 400,
@@ -72,7 +70,7 @@ export const GetAllTeamService = async () => {
 export const GetTeamByIdService = async (req) => {
   try {
     const teamId = convertObjectId(req.params.teamId);
-    
+
     const team = await TeamModel.findOne({ _id: teamId });
 
     if (!team) {

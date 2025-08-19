@@ -1,52 +1,86 @@
-import { convertObjectId } from "../lib/utility.js";
+import { convertObjectId, removeExistingFile } from "../lib/utility.js";
 import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
 import { TokenEncoded } from "../lib/tokenUtility.js";
+import path from "path";
+import { faceapi, loadModels, canvas } from "../lib/faceApiSetup.js";
 
 export const CreateUserService = async (req) => {
-  try {
-    const body = req.body;
-    const { profilePicture, fullName, role, email, password, teamId } = body;
+  const body = req.body;
+  const image = req.file;
+  const { fullName, role, email, password, teamId } = body;
+  const imagePath = image ? path.join("uploads/images", image.filename) : null;
 
-    if (
-      !profilePicture ||
-      !fullName ||
-      !role ||
-      !email ||
-      !password ||
-      !teamId
-    ) {
+  try {
+    if (role === "student" && !image) {
       return {
         status: 400,
-        message: "Required field missing, please provide all required field",
+        message: "User Image required",
+        data: null,
+      };
+    }
+
+    if (!fullName || !role || !email || !password || !teamId) {
+      removeExistingFile(imagePath);
+      return {
+        status: 400,
+        message: "Required field missing",
         data: null,
       };
     }
 
     const existUser = await UserModel.findOne({ email });
     if (existUser) {
+      removeExistingFile(imagePath);
       return {
         status: 400,
-        message: "User already exist.",
+        message: "User already exists",
         data: null,
       };
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
+    const protocol = req.protocol;
+    const imageUrl = image
+      ? `${protocol}://${req.get("host")}/uploads/images/${image.filename}`
+      : null;
 
+    // ✅ Load face-api models
+    await loadModels();
+
+    // ✅ Load and process image
+    let descriptor = [];
+    if (imagePath) {
+      const img = await canvas.loadImage(imagePath);
+      const detection = await faceapi
+        .detectSingleFace(img)
+        .withFaceLandmarks()
+        .withFaceDescriptor();
+
+      if (!detection) {
+        removeExistingFile(imagePath);
+        return {
+          status: 400,
+          message: "No face detected in uploaded image",
+          data: null,
+        };
+      }
+
+      descriptor = Array.from(detection.descriptor); // store as array in DB
+    }
+
+    // ✅ Create user object
     const userObj = {
       ...body,
+      profilePicture: imageUrl || "",
       password: hashedPassword,
+      faceDescriptor: descriptor, // 🔹 stored for later face matching
     };
 
     const user = await UserModel.create(userObj);
-
     if (!user) {
-      return {
-        status: 500,
-        message: "User create Failed",
-        data: null,
-      };
+      removeExistingFile(imagePath);
+      return { status: 500, message: "User creation failed", data: null };
     }
 
     const userWithoutPass = user.toObject();
@@ -54,6 +88,8 @@ export const CreateUserService = async (req) => {
 
     return { status: 200, message: "Successful", data: userWithoutPass };
   } catch (err) {
+    console.error("❌ FaceAPI Error:", err);
+    removeExistingFile(imagePath);
     return { status: 500, message: err.message || "Server issue", data: null };
   }
 };
@@ -154,20 +190,34 @@ export const GetUserByIdService = async (req) => {
 };
 
 export const UpdateUserService = async (req) => {
-  try {
-    const userId = convertObjectId(req.params.userId);
-    const body = req.body;
+  const userId = convertObjectId(req.params.userId);
+  const body = req.body;
+  const image = req.file;
+  let imagePath = null;
+  const newImagePath = image
+    ? path.join("uploads/images", image.filename)
+    : null;
 
+  try {
     const existUser = await UserModel.findById(userId);
 
     if (!existUser) {
+      removeExistingFile(newImagePath);
       return { status: 404, message: "User not found", data: null };
     }
 
-    const updateData = { ...body };
-    if (updateData.password) {
-      delete updateData.password;
+    if (existUser.profilePicture) {
+      const linkArray = existUser.profilePicture.split("/");
+      const fileName = linkArray[linkArray.length - 1];
+      imagePath = path.join("uploads/images", fileName);
     }
+
+    const protocol = req.protocol;
+    const imageUrl = image
+      ? `${protocol}://${req.get("host")}/uploads/images/${image.filename}`
+      : existUser.profilePicture;
+
+    const updateData = { ...body, profilePicture: imageUrl };
 
     const updatedUser = await UserModel.findByIdAndUpdate(
       userId,
@@ -176,18 +226,27 @@ export const UpdateUserService = async (req) => {
     );
 
     if (!updatedUser) {
+      removeExistingFile(newImagePath);
       return {
         status: 500,
         message: "User update failed",
         data: null,
       };
     }
+
+    const userWithoutPass = updatedUser.toObject();
+    delete userWithoutPass.password;
+
+    if (image) {
+      removeExistingFile(imagePath);
+    }
     return {
       status: 200,
       message: "Successful",
-      data: updatedUser,
+      data: userWithoutPass,
     };
   } catch (err) {
+    removeExistingFile(newImagePath);
     return { status: 500, message: err.message || "Server issue", data: null };
   }
 };
@@ -269,10 +328,14 @@ export const ForgotUserPasswordService = async (req) => {
         data: null,
       };
     }
+
+    const userWithoutPass = updatedUser.toObject();
+    delete userWithoutPass.password;
+
     return {
       status: 200,
       message: "Password reset successful",
-      data: updatedUser,
+      data: userWithoutPass,
     };
   } catch (err) {
     return {
