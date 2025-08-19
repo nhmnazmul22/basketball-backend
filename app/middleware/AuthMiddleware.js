@@ -1,5 +1,5 @@
 // ===== Internal Imports =====
-import { TokenDecoded } from "../utility/TokenUtility.js";
+import { TokenDecoded } from "../lib/tokenUtility.js";
 
 // ==== Verify Auth Token ====
 export const AuthVerify = (req, res, next) => {
@@ -10,9 +10,9 @@ export const AuthVerify = (req, res, next) => {
     return res.status(401).json({ status: "Failed", message: "Unauthorize" });
   }
 
-  const { id, email, role } = decodedToken;
+  const { user_id, email, role } = decodedToken;
 
-  req.headers.userId = id;
+  req.headers.userId = user_id;
   req.headers.email = email;
   req.header.role = role;
   next();

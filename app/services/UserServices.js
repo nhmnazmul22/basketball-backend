@@ -1,7 +1,7 @@
 import { convertObjectId } from "../lib/utility.js";
 import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
-import { TokenEncoded } from "../lib/tokenUtility.js.js";
+import { TokenEncoded } from "../lib/tokenUtility.js";
 
 export const CreateUserService = async (req) => {
   try {
@@ -23,6 +23,15 @@ export const CreateUserService = async (req) => {
       };
     }
 
+    const existUser = await UserModel.findOne({ email });
+    if (existUser) {
+      return {
+        status: 400,
+        message: "User already exist.",
+        data: null,
+      };
+    }
+
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const userObj = {
@@ -40,7 +49,10 @@ export const CreateUserService = async (req) => {
       };
     }
 
-    return { status: 200, message: "Successful", data: user };
+    const userWithoutPass = user.toObject();
+    delete userWithoutPass.password;
+
+    return { status: 200, message: "Successful", data: userWithoutPass };
   } catch (err) {
     return { status: 500, message: err.message || "Server issue", data: null };
   }
@@ -127,9 +139,9 @@ export const GetAllUserService = async () => {
 
 export const GetUserByIdService = async (req) => {
   try {
-    const userId = convertObjectId(req.headers.userId);
+    const userId = convertObjectId(req.params.userId);
 
-    const user = await UserModel.findById(userId);
+    const user = await UserModel.findById(userId, { password: 0 });
 
     if (!user) {
       return { status: 404, message: "User not found", data: null };
@@ -143,7 +155,7 @@ export const GetUserByIdService = async (req) => {
 
 export const UpdateUserService = async (req) => {
   try {
-    const userId = convertObjectId(req.headers.userId);
+    const userId = convertObjectId(req.params.userId);
     const body = req.body;
 
     const existUser = await UserModel.findById(userId);
@@ -182,16 +194,17 @@ export const UpdateUserService = async (req) => {
 
 export const DeleteUserService = async (req) => {
   try {
-    const userId = convertObjectId(req.headers.userId);
-
+    const userId = convertObjectId(req.params.userId);
+    console.log(userId);
     const existUser = await UserModel.findById(userId);
 
     if (!existUser) {
       return { status: 404, message: "User not found", data: null };
     }
 
-    const deletedUser = await UserModel.findByIdAndDelete(userId);
+    const deletedUser = await UserModel.deleteOne({ _id: userId });
 
+    console.log(deletedUser);
     if (!deletedUser) {
       return { status: 500, message: "User delete failed", data: null };
     }
