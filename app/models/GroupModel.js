@@ -11,7 +11,7 @@ const DataSchema = new mongoose.Schema(
       enum: ["active", "inactive"],
       default: "active",
     },
-    membersId: {
+    membersIds: {
       type: [mongoose.Schema.Types.ObjectId],
       required: true,
     },

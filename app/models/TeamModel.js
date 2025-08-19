@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 const DataSchema = new mongoose.Schema(
   {
     logo: { type: String, required: true },
-    teamName: { type: String, required: true },
+    name: { type: String, required: true },
     description: { type: String },
     status: {
       type: String,

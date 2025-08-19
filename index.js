@@ -6,6 +6,8 @@ import hpp from "hpp";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import router from "./routes/api.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 import {
   MAX_JSON_SIZE,
@@ -16,6 +18,10 @@ import {
   URL_ENCODED,
   WEB_CACHE,
 } from "./app/config/config.js";
+
+// Manually create __dirname for ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -30,6 +36,9 @@ app.use(express.json({ limit: MAX_JSON_SIZE }));
 
 // URL Encode
 app.use(express.urlencoded({ extended: URL_ENCODED }));
+
+// Static Folder
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Request Rate Limit
 const limiter = rateLimit({
