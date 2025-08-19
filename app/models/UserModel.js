@@ -6,7 +6,6 @@ const DataSchema = new mongoose.Schema(
     profilePicture: { type: String, required: true },
     fullName: { type: String, required: true },
     dob: { type: String },
-    role: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
     status: {
@@ -15,7 +14,7 @@ const DataSchema = new mongoose.Schema(
       default: "active",
     },
     phone: { type: String },
-    team: { type: mongoose.Schema.Types.ObjectId, required: true },
+    teamId: { type: mongoose.Schema.Types.ObjectId, required: true },
   },
   { versionKey: false, timestamps: true }
 );

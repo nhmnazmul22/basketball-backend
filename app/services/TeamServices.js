@@ -72,11 +72,7 @@ export const GetAllTeamService = async () => {
 export const GetTeamByIdService = async (req) => {
   try {
     const teamId = convertObjectId(req.params.teamId);
-
-    if (!teamId) {
-      return { status: 404, message: "Team not found", data: null };
-    }
-
+    
     const team = await TeamModel.findOne({ _id: teamId });
 
     if (!team) {
