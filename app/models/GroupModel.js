@@ -20,6 +20,7 @@ const DataSchema = new mongoose.Schema(
 );
 
 // Define Model
-const TeamModel = mongoose.models.teams || mongoose.model("teams", DataSchema);
+const GroupModel =
+  mongoose.models.groups || mongoose.model("groups", DataSchema);
 
-export default TeamModel;
+export default GroupModel;

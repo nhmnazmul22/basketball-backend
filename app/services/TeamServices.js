@@ -167,7 +167,9 @@ export const DeleteTeamService = async (req) => {
       return { status: 500, message: "Team delete failed", data: null };
     }
 
-    removeExistingFile(imagePath);
+    if (imagePath) {
+      removeExistingFile(imagePath);
+    }
     return { status: 200, message: "successful", data: deleteTeam };
   } catch (err) {
     return { status: 500, message: err.message || "Server issue", data: null };

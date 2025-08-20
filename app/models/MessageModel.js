@@ -11,6 +11,7 @@ const DataSchema = new mongoose.Schema(
 );
 
 // Define Model
-const TeamModel = mongoose.models.teams || mongoose.model("teams", DataSchema);
+const MessageModel =
+  mongoose.models.messages || mongoose.model("messages", DataSchema);
 
-export default TeamModel;
+export default MessageModel;

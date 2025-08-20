@@ -5,13 +5,12 @@ const DataSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     message: { type: String, required: true },
-    date: { type: Date, required: true },
-    team: { type: mongoose.Schema.Types.ObjectId, required: true },
+    date: { type: String, required: true },
+    teamId: { type: mongoose.Schema.Types.ObjectId },
     status: {
       type: String,
-      enum: ["Active", "Archive"],
-      default: "Active",
-      required: true,
+      enum: ["active", "archive"],
+      default: "active",
     },
     isPinned: { type: Boolean, default: false },
   },
@@ -19,7 +18,7 @@ const DataSchema = new mongoose.Schema(
 );
 
 // Define Model
-const TransactionModel =
-  mongoose.models.transactions || mongoose.model("transactions", DataSchema);
+const AnnouncementModel =
+  mongoose.models.announcements || mongoose.model("announcements", DataSchema);
 
-export default TransactionModel;
+export default AnnouncementModel;
