@@ -40,16 +40,16 @@ app.use(express.urlencoded({ extended: URL_ENCODED }));
 // Static Folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Web cache
-app.set("etag", WEB_CACHE);
-app.set("trust proxy", 1);
-
 // Request Rate Limit
 const limiter = rateLimit({
   windowMs: REQUEST_LIMIT_TIME,
   max: REQUEST_LIMIT_NUMBER,
 });
 app.use(limiter);
+
+// Web cache
+app.set("etag", WEB_CACHE);
+app.set("trust proxy", "loopback");
 
 // Add App Router
 app.use("/api", router);
