@@ -66,15 +66,22 @@ export const UpdatePostService = async (req) => {
   try {
     const postId = convertObjectId(req.params.postId);
     const body = req.body;
+    const { like } = body;
     const existPost = await PostModel.findOne({ _id: postId });
 
     if (!existPost) {
       return { status: 404, message: "Post not found", data: null };
     }
 
+    let newLike = existPost.like;
+
+    if (like) {
+      newLike += like;
+    }
+
     const updatedPost = await PostModel.findOneAndUpdate(
       { _id: postId },
-      body,
+      { ...body, like: newLike },
       {
         new: true,
       }
