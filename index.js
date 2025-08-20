@@ -40,7 +40,7 @@ app.use(express.urlencoded({ extended: URL_ENCODED }));
 // Static Folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-app.set("trust proxy", true);
+app.set("trust proxy", 1);
 
 // Request Rate Limit
 const limiter = rateLimit({
