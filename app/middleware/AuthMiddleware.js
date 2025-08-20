@@ -14,6 +14,6 @@ export const AuthVerify = (req, res, next) => {
 
   req.headers.userId = user_id;
   req.headers.email = email;
-  req.header.role = role;
+  req.headers.role = role;
   next();
 };

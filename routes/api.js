@@ -6,6 +6,7 @@ import * as AnnouncementController from "../app/controllers/AnnouncementControll
 import * as GroupController from "../app/controllers/GroupController.js";
 import * as PostController from "../app/controllers/PostController.js";
 import { upload } from "../app/middleware/UploadMiddleware.js";
+import { AuthVerify } from "../app/middleware/AuthMiddleware.js";
 
 // === Initial Express Router ===
 const router = express.Router();
@@ -18,7 +19,7 @@ router.post(
 );
 router.post("/login", UserController.LoginUserController);
 router.get("/users", UserController.GetAllUserController);
-router.get("/user/:userId", UserController.GetUserByIdController);
+router.get("/user-by-id", AuthVerify, UserController.GetUserByIdController);
 router.put(
   "/update-user/:userId",
   upload.single("image"),

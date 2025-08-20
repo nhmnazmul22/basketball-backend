@@ -175,7 +175,7 @@ export const GetAllUserService = async () => {
 
 export const GetUserByIdService = async (req) => {
   try {
-    const userId = convertObjectId(req.params.userId);
+    let userId = convertObjectId(req.headers.userId);
 
     const user = await UserModel.findById(userId, { password: 0 });
 
