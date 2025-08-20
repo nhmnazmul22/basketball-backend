@@ -50,6 +50,8 @@ app.use(limiter);
 // Web cache
 app.set("etag", WEB_CACHE);
 
+app.set("trust proxy", "loopback");
+
 // Add App Router
 app.use("/api", router);
 
