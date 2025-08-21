@@ -18,6 +18,7 @@ router.post(
   UserController.CreateUserController
 );
 router.post("/login", UserController.LoginUserController);
+router.post("/logout", UserController.LogoutController);
 router.get("/users", UserController.GetAllUserController);
 router.get("/user-by-id", AuthVerify, UserController.GetUserByIdController);
 router.put(

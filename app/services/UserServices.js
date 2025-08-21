@@ -159,6 +159,23 @@ export const LoginUserService = async (req, res) => {
   }
 };
 
+export const LogOutService = async (req, res) => {
+  try {
+    res.clearCookie("token");
+    return {
+      status: 200,
+      message: "Logout Successful",
+      data: null,
+    };
+  } catch (err) {
+    return {
+      status: 500,
+      message: err.message || "Server issue",
+      data: null,
+    };
+  }
+};
+
 export const GetAllUserService = async () => {
   try {
     const users = await UserModel.find({}, { password: 0 });

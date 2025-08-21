@@ -14,6 +14,13 @@ export const LoginUserController = async (req, res) => {
     .json({ message: result.message, data: result.data });
 };
 
+export const LogoutController = async (req, res) => {
+  const result = await UserServices.LogOutService(req, res);
+  return res
+    .status(result.status)
+    .json({ message: result.message, data: result.data });
+};
+
 export const GetAllUserController = async (req, res) => {
   const result = await UserServices.GetAllUserService();
   return res
