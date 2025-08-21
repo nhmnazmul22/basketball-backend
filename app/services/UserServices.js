@@ -234,7 +234,35 @@ export const UpdateUserService = async (req) => {
       ? `${protocol}://${req.get("host")}/uploads/images/${image.filename}`
       : existUser.profilePicture;
 
-    const updateData = { ...body, profilePicture: imageUrl };
+    // ✅ Load face-api models
+    await loadModels();
+
+    // ✅ Load and process image
+    let descriptor = existUser.faceDescriptor || [];
+    if (imagePath) {
+      const img = await canvas.loadImage(imagePath);
+      const detection = await faceapi
+        .detectSingleFace(img)
+        .withFaceLandmarks()
+        .withFaceDescriptor();
+
+      if (!detection) {
+        removeExistingFile(imagePath);
+        return {
+          status: 400,
+          message: "No face detected in uploaded image",
+          data: null,
+        };
+      }
+
+      descriptor = Array.from(detection.descriptor); // store as array in DB
+    }
+
+    const updateData = {
+      ...body,
+      profilePicture: imageUrl,
+      faceDescriptor: descriptor,
+    };
 
     const updatedUser = await UserModel.findByIdAndUpdate(
       userId,
