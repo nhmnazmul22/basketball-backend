@@ -94,3 +94,61 @@ export const CreateAttendanceService = async (req) => {
     return { status: 500, message: err.message || "Server issue", data: null };
   }
 };
+
+export const GetAllAttendanceService = async (req) => {
+  try {
+    const attendances = await AttendanceModel.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          localField: "studentId",
+          foreignField: "_id",
+          as: "studentDetails",
+        },
+      },
+      {
+        $lookup: {
+          from: "teams",
+          localField: "teamId",
+          foreignField: "_id",
+          as: "teamDetails",
+        },
+      },
+      {
+        $unwind: "$studentDetails",
+      },
+      {
+        $unwind: "$teamDetails",
+      },
+      {
+        $project: {
+          _id: 1,
+          studentId: 1,
+          teamId: 1,
+          status: 1,
+          gps: 1,
+          faceMatch: 1,
+          studentName: "$studentDetails.name",
+          studentEmail: "$studentDetails.email",
+          teamName: "$teamDetails.name",
+        },
+      },
+    ]);
+
+    if (attendances.length === 0) {
+      return {
+        status: 404,
+        message: "No attendance records found",
+        data: null,
+      };
+    }
+
+    return {
+      status: 200,
+      message: "Attendance records found",
+      data: attendances,
+    };
+  } catch (err) {
+    return { status: 500, message: err.message || "Server issue", data: null };
+  }
+};

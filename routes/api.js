@@ -50,6 +50,7 @@ router.post(
   upload.single("image"),
   AttendanceController.CreateAttendanceController
 );
+router.get("/attendances", AttendanceController.GetAllAttendanceController);
 
 // Announcement Routes
 router.post(
