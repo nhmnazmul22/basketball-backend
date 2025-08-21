@@ -239,15 +239,15 @@ export const UpdateUserService = async (req) => {
 
     // ✅ Load and process image
     let descriptor = existUser.faceDescriptor || [];
-    if (imagePath) {
-      const img = await canvas.loadImage(imagePath);
+    if (newImagePath) {
+      const img = await canvas.loadImage(newImagePath);
       const detection = await faceapi
         .detectSingleFace(img)
         .withFaceLandmarks()
         .withFaceDescriptor();
 
       if (!detection) {
-        removeExistingFile(imagePath);
+        removeExistingFile(newImagePath);
         return {
           status: 400,
           message: "No face detected in uploaded image",
