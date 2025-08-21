@@ -131,6 +131,8 @@ export const GetAllAttendanceService = async (req) => {
           studentName: "$studentDetails.fullName",
           studentEmail: "$studentDetails.email",
           teamName: "$teamDetails.name",
+          createdAt: 1,
+          updatedAt: 1,
         },
       },
     ]);
