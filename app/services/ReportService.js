@@ -56,21 +56,25 @@ export const DashboardReportService = async () => {
     if (transaction.length > 0) {
       // Calculate payment pending
       transaction.forEach((tran) => {
-        if (tran.status === "menunggu") {
-          summary.paymentPending += tran.amount;
+        if (tran.status === "menunggu" && tran.type === "penghasilan") {
+          summary.paymentPending += Number(tran.amount);
         }
       });
 
       // Calculate total income and expenses
-      const totalExpenses = 0;
-      const totalIncome = 0;
+      let totalExpenses = 0;
+      let totalIncome = 0;
       transaction.forEach((tran) => {
-        if (tran.type === "pengeluaran") {
-          totalExpenses += tran.amount;
-        } else {
-          totalIncome += tran.amount;
+        if (tran.status === "dibayar") {
+          if (tran.type === "pengeluaran") {
+            totalExpenses += Number(tran.amount);
+          } else {
+            totalIncome += Number(tran.amount);
+          }
         }
       });
+
+      console.log(totalIncome), console.log(totalExpenses);
       summary.netIncome = totalIncome - totalExpenses;
     }
 
@@ -121,6 +125,8 @@ export const ReportService = async (req) => {
       averageAttendance: 0,
       paymentPaid: 0,
       paymentPending: 0,
+      totalIncome: 0,
+      totalExpenses: 0,
       netIncome: 0,
     };
 
@@ -164,19 +170,21 @@ export const ReportService = async (req) => {
     const allTransaction = await TransactionModel.find({});
 
     if (transactions.length > 0) {
-      let totalIncome = 0;
-      let totalExpenses = 0;
-
       transactions.forEach((tran) => {
-        // summary
-        if (tran.status === "dibayar") summary.paymentPaid += tran.amount;
-        if (tran.status === "menunggu") summary.paymentPending += tran.amount;
-
-        if (tran.type === "pengeluaran") totalExpenses += tran.amount;
-        else totalIncome += tran.amount;
+        if (tran.type === "penghasilan") {
+          if (tran.status === "dibayar") {
+            summary.totalIncome += Number(tran.amount);
+            summary.paymentPaid += Number(tran.amount);
+          }
+          if (tran.status === "menunggu") {
+            summary.paymentPending += Number(tran.amount);
+          }
+        } else {
+          summary.totalExpenses += Number(tran.amount);
+        }
       });
 
-      summary.netIncome = totalIncome - totalExpenses;
+      summary.netIncome = summary.totalIncome - summary.totalExpenses;
     }
 
     if (allTransaction.length > 0) {
@@ -184,7 +192,18 @@ export const ReportService = async (req) => {
         // graph (last 6 months)
         const monthIdx = new Date(tran.createdAt).getMonth(); // 0-11
         const monthKey = months[monthIdx];
-        incomeGraphData[monthKey] += tran.amount;
+        let totalIncome = 0;
+        let totalExpenses = 0;
+        if (tran.type === "penghasilan") {
+          if (tran.status === "dibayar") {
+            totalIncome += Number(tran.amount);
+          }
+        } else {
+          if (tran.status === "dibayar") {
+            totalExpenses += Number(tran.amount);
+          }
+        }
+        incomeGraphData[monthKey] += totalIncome - totalExpenses;
       });
     }
 
@@ -199,7 +218,6 @@ export const ReportService = async (req) => {
         (att) => att.status === "hadiah" || att.status === "terlambat"
       ).length;
 
-      console.log("Total Present:", totalPresent);
       const totalAbsent = attendances.filter(
         (att) => att.status === "absen"
       ).length;

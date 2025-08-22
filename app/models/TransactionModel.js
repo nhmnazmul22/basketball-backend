@@ -3,14 +3,14 @@ import mongoose from "mongoose";
 // Define DataSchema
 const DataSchema = new mongoose.Schema(
   {
-    studentId: { type: mongoose.Schema.Types.ObjectId, required: true },
-    amount: { type: String, required: true },
-    method: { type: Boolean, required: true },
+    studentId: { type: mongoose.Schema.Types.ObjectId },
+    amount: { type: Number, required: true },
+    method: { type: String, required: true },
     type: { type: String, enum: ["penghasilan", "pengeluaran"], require: true },
     status: {
       type: String,
       enum: ["dibayar", "dibatalkan", "menunggu"],
-      required: true,
+      default: "dibayar",
     },
     remark: { type: String },
   },

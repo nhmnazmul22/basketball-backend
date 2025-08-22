@@ -3,7 +3,7 @@ import { convertObjectId } from "../lib/utility.js";
 
 export const CreateTransactionService = async (req) => {
   try {
-    const body = req.body();
+    const body = req.body;
     const { studentId, amount, type, method } = body;
 
     if (!studentId || !amount || !type || !method) {
@@ -50,6 +50,7 @@ export const GetAllTransactionsService = async () => {
       {
         $project: {
           "studentInfo.password": 0,
+          "studentInfo.faceDescriptor": 0,
         },
       },
     ]);
@@ -70,8 +71,8 @@ export const GetAllTransactionsService = async () => {
 
 export const UpdateTransactionService = async (req) => {
   try {
-    const transactionId = convertObjectId(req.params.id);
-    const updateData = req.body();
+    const transactionId = convertObjectId(req.params.transactionId);
+    const updateData = req.body;
 
     const existTransaction = await TransactionModel.findById(transactionId);
 
