@@ -12,6 +12,7 @@ const DataSchema = new mongoose.Schema(
     },
     gps: { type: Boolean, required: true },
     faceMatch: { type: Boolean, required: true },
+    notificationSent: { type: Boolean, default: false },
   },
   { versionKey: false, timestamps: true }
 );

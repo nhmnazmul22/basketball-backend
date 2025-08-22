@@ -16,6 +16,7 @@ const DataSchema = new mongoose.Schema(
     },
     phone: { type: String },
     faceDescriptor: { type: [Number], default: [] },
+    expoPushToken: { type: String },
     teamId: { type: mongoose.Schema.Types.ObjectId, required: true },
   },
   { versionKey: false, timestamps: true }

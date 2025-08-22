@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import router from "./routes/api.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import cron from "node-cron";
 
 import {
   MAX_JSON_SIZE,
@@ -64,6 +65,13 @@ mongoose
   .catch((err) => {
     console.log("Database Error", err);
   });
+
+// ---- Cron Job for Automatic Notifications ----
+// Runs every day at 10:00 AM
+cron.schedule("0 10 * * *", async () => {
+  console.log("Running daily absent notification job...");
+  await sendAbsentNotifications();
+});
 
 // App Run
 app.listen(PORT, "0.0.0.0", () => {

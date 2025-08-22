@@ -6,6 +6,8 @@ import * as AnnouncementController from "../app/controllers/AnnouncementControll
 import * as GroupController from "../app/controllers/GroupController.js";
 import * as PostController from "../app/controllers/PostController.js";
 import * as ReportController from "../app/controllers/ReportController.js";
+import * as NotificationController from "../app/controllers/NotificationController.js";
+import * as TransactionController from "../app/controllers/TransactionController.js";
 import { upload } from "../app/middleware/UploadMiddleware.js";
 import { AuthVerify } from "../app/middleware/AuthMiddleware.js";
 
@@ -101,5 +103,26 @@ router.delete("/delete-post/:postId", PostController.DeletePostController);
 router.get("/dashboard-report", ReportController.DashboardReportController);
 router.post("/report", ReportController.ReportController);
 router.post("/generate-pdf-report", ReportController.ReportPDFController);
+
+// Notification Routes
+router.post(
+  "/manual-notification",
+  NotificationController.ManualNotificationController
+);
+router.post(
+  "/automatic-notification",
+  NotificationController.AutomaticNotificationController
+);
+
+// Transaction Routes
+router.post(
+  "/create-transaction",
+  TransactionController.CreateTransactionController
+);
+router.get("/transactions", TransactionController.GetAllTransactionController);
+router.put(
+  "/update-transaction/:transactionId",
+  TransactionController.UpdateTransactionController
+);
 
 export default router;
