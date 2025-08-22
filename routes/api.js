@@ -5,6 +5,7 @@ import * as AttendanceController from "../app/controllers/AttendanceController.j
 import * as AnnouncementController from "../app/controllers/AnnouncementController.js";
 import * as GroupController from "../app/controllers/GroupController.js";
 import * as PostController from "../app/controllers/PostController.js";
+import * as ReportController from "../app/controllers/ReportController.js";
 import { upload } from "../app/middleware/UploadMiddleware.js";
 import { AuthVerify } from "../app/middleware/AuthMiddleware.js";
 
@@ -95,5 +96,10 @@ router.get("/posts", PostController.GetAllPostController);
 router.get("/posts/:postId", PostController.GetPostByIdController);
 router.put("/update-post/:postId", PostController.UpdatePostController);
 router.delete("/delete-post/:postId", PostController.DeletePostController);
+
+// Report Routes
+router.get("/dashboard-report", ReportController.DashboardReportController);
+router.post("/report", ReportController.ReportController);
+router.post("/generate-pdf-report", ReportController.ReportPDFController);
 
 export default router;
