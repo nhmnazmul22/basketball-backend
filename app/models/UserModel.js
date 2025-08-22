@@ -8,10 +8,10 @@ const DataSchema = new mongoose.Schema(
     dob: { type: String },
     email: { type: String, required: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ["admin", "student", "couch"], required: true },
+    role: { type: String, enum: ["admin", "murid", "pelatih"], required: true },
     status: {
       type: String,
-      enum: ["active", "inactive", "on leave"],
+      enum: ["aktif", "tidak aktif", "sedang cuti"],
       default: "active",
     },
     phone: { type: String },

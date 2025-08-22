@@ -5,7 +5,7 @@ const DataSchema = new mongoose.Schema(
   {
     studentId: { type: mongoose.Schema.Types.ObjectId, required: true },
     teamId: { type: mongoose.Schema.Types.ObjectId, required: true },
-    status: { type: String, enum: ["present", "absent"], required: true },
+    status: { type: String, enum: ["hadiah", "absen"], required: true },
     gps: { type: Boolean, required: true },
     faceMatch: { type: Boolean, required: true },
   },

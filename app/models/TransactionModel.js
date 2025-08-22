@@ -7,10 +7,10 @@ const DataSchema = new mongoose.Schema(
     team: { type: String, required: true },
     amount: { type: String, required: true },
     method: { type: Boolean, required: true },
-    type: { type: String, enum: ["Income", "Expense"], require: true },
+    type: { type: String, enum: ["penghasilan", "pengeluaran"], require: true },
     status: {
       type: String,
-      enum: ["Paid", "Cancel", "Pending"],
+      enum: ["dibayar", "dibatalkan", "menunggu"],
       required: true,
     },
     date: { type: Date, required: true },

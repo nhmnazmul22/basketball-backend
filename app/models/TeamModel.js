@@ -8,8 +8,8 @@ const DataSchema = new mongoose.Schema(
     description: { type: String },
     status: {
       type: String,
-      enum: ["active", "inactive"],
-      default: "active",
+      enum: ["aktif", "tidak aktif"],
+      default: "aktif",
     },
   },
   { versionKey: false, timestamps: true }

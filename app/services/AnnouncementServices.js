@@ -9,7 +9,7 @@ export const CreateAnnouncementService = async (req) => {
     if (!title || !message || !date) {
       return {
         status: 400,
-        message: "Missing require field",
+        message: "Missing required field",
         data: null,
       };
     }
@@ -19,14 +19,14 @@ export const CreateAnnouncementService = async (req) => {
     if (!announcement) {
       return {
         status: 500,
-        message: "announcement create failed",
+        message: "Pengumuman gagal dibuat",
         data: null,
       };
     }
 
-    return { status: 200, message: "Successful", data: announcement };
+    return { status: 200, message: "Berhasil", data: announcement };
   } catch (err) {
-    return { status: 500, message: err.message || "Server issue", data: null };
+    return { status: 500, message: err.message || "Masalah server", data: null };
   }
 };
 
@@ -51,12 +51,16 @@ export const GetAllAnnouncementService = async () => {
     ]);
 
     if (announcements.length === 0) {
-      return { status: 404, message: "Announcements not found", data: null };
+      return { status: 404, message: "Pengumuman tidak ditemukan", data: null };
     }
 
-    return { status: 200, message: "successful", data: announcements };
+    return { status: 200, message: "berhasil", data: announcements };
   } catch (err) {
-    return { status: 500, message: err.message || "Server issue", data: null };
+    return {
+      status: 500,
+      message: err.message || "Masalah server",
+      data: null,
+    };
   }
 };
 

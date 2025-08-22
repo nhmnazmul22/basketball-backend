@@ -9,8 +9,8 @@ const DataSchema = new mongoose.Schema(
     teamId: { type: mongoose.Schema.Types.ObjectId },
     status: {
       type: String,
-      enum: ["active", "archive"],
-      default: "active",
+      enum: ["aktif", "arsip"],
+      default: "aktif",
     },
     isPinned: { type: Boolean, default: false },
   },
