@@ -55,7 +55,7 @@ export const CreateGroupService = async (req) => {
 
 export const GetAllGroupService = async () => {
   try {
-    const groups = await GroupModel.find({});
+    const groups = await GroupModel.find({}).sort({ createAt: -1 });
 
     if (groups.length === 0) {
       return { status: 404, message: "Groups not found", data: null };
@@ -114,7 +114,7 @@ export const UpdateGroupService = async (req) => {
       : existGroup.logo;
 
     let newMemberIds = existGroup.membersIds;
-    
+
     if (membersIds) {
       const uniqueMemberIds = Array(membersIds).filter((memberId) =>
         existGroup.membersIds.includes(memberId) ? null : memberId

@@ -55,7 +55,7 @@ export const CreateTeamService = async (req) => {
 
 export const GetAllTeamService = async () => {
   try {
-    const teams = await TeamModel.find({});
+    const teams = await TeamModel.find({}).sort({ createAt: -1 });
 
     if (teams.length === 0) {
       return { status: 404, message: "Teams not found", data: null };

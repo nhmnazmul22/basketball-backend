@@ -53,6 +53,7 @@ export const GetAllTransactionsService = async () => {
           "studentInfo.faceDescriptor": 0,
         },
       },
+      { $sort: { createdAt: -1 } },
     ]);
 
     if (transactions.length === 0) {

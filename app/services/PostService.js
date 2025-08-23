@@ -34,7 +34,7 @@ export const CreatePostService = async (req) => {
 
 export const GetAllPostService = async () => {
   try {
-    const posts = await PostModel.find({});
+    const posts = await PostModel.find({}).sort({ createAt: -1 });
 
     if (posts.length === 0) {
       return { status: 404, message: "Posts not found", data: null };

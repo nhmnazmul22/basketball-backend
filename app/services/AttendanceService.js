@@ -135,6 +135,7 @@ export const GetAllAttendanceService = async (req) => {
           updatedAt: 1,
         },
       },
+      { $sort: { createdAt: -1 } },
     ]);
 
     if (attendances.length === 0) {

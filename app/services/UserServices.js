@@ -178,7 +178,9 @@ export const LogOutService = async (req, res) => {
 
 export const GetAllUserService = async () => {
   try {
-    const users = await UserModel.find({}, { password: 0 });
+    const users = await UserModel.find({}, { password: 0 }).sort({
+      createAt: -1,
+    });
 
     if (users.length === 0) {
       return { status: 404, message: "Users not found", data: null };
