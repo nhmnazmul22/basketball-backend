@@ -12,8 +12,7 @@ const DataSchema = new mongoose.Schema(
       default: "aktif",
     },
     membersIds: {
-      type: [mongoose.Schema.Types.ObjectId],
-      required: true,
+      type: [mongoose.Schema.Types.ObjectId], default: []
     },
   },
   { versionKey: false, timestamps: true }

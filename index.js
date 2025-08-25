@@ -9,6 +9,7 @@ import router from "./routes/api.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import cron from "node-cron";
+import { Server } from "socket.io";
 
 import {
   MAX_JSON_SIZE,
@@ -19,12 +20,20 @@ import {
   URL_ENCODED,
   WEB_CACHE,
 } from "./app/config/config.js";
+import { createServer } from "http";
+import socketConnection from "./app/lib/socket.js"
 
 // Manually create __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*"
+  }
+}); 
 
 // Security Apply
 app.use(cors());
@@ -56,6 +65,7 @@ app.set("etag", WEB_CACHE);
 // Add App Router
 app.use("/api", router);
 
+
 // MongoDB connection
 mongoose
   .connect(MONGODB_CONNECTION, { autoIndex: true })
@@ -66,6 +76,10 @@ mongoose
     console.log("Database Error", err);
   });
 
+
+  // Socket io connection
+  io.on("connection", socketConnection)
+
 // ---- Cron Job for Automatic Notifications ----
 // Runs every day at 10:00 AM
 cron.schedule("0 10 * * *", async () => {
@@ -74,6 +88,6 @@ cron.schedule("0 10 * * *", async () => {
 });
 
 // App Run
-app.listen(PORT, "0.0.0.0", () => {
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port: ${PORT}`);
 });
