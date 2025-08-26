@@ -1,9 +1,9 @@
-import MessageModel from "../models/MessageModel";
+import MessageModel from "../models/MessageModel.js";
+import {convertObjectId} from "../lib/utility.js"
 
-export const SendMessageService = async (req) => {
+export const CreateMessageService = async (messagObj) => {
   try {
-    const body = req.body;
-    const { message, groupId, senderId } = body;
+    const { message, groupId, senderId } = messagObj;
 
     if (!message || !groupId || !senderId) {
       return {
@@ -13,7 +13,7 @@ export const SendMessageService = async (req) => {
       };
     }
 
-    const messageData = await MessageModel.create(body);
+    const messageData = await MessageModel.create(messagObj);
 
     if (!messageData) {
       return {
@@ -22,7 +22,7 @@ export const SendMessageService = async (req) => {
         data: null,
       };
     }
-
+  console.log(messageData)
     return {
       status: 200,
       message: "Message send successful",
@@ -30,3 +30,38 @@ export const SendMessageService = async (req) => {
     };
   } catch (err) {}
 };
+
+export const GetAllMessageService = async (req)=>{
+  try{
+    const groupId = convertObjectId(req.params.groupId);
+    
+    const messages = await MessageModel.aggregate([
+      {$match: {groupId: groupId}},
+      {
+        $lookup: {
+          from: "users",
+          localField: "senderId",
+          foreignField: "_id",
+          as: "senderDetails",
+        },
+      },
+      {
+        $unwind: "$senderDetails",
+      },
+    ]) 
+
+
+
+    if(messages.length === 0){
+      return {status: 404, message: "Messages not found", data: []};
+    }
+
+    return {
+      status: 200,
+      message: "Messages found",
+      data: messages
+    }
+  }catch(err){
+    return { status: 500, message: err.message || "Server issue", data: null };
+  }
+}

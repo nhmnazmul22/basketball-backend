@@ -9,15 +9,7 @@ export const CreateGroupService = async (req) => {
   const imagePath = image ? path.join("uploads/images", image.filename) : null;
 
   try {
-    if (!image) {
-      return {
-        status: 400,
-        message: "Group logo or image required",
-        data: null,
-      };
-    }
-
-    if (!groupName || !membersIds) {
+    if (!groupName) {
       removeExistingFile(imagePath);
       return {
         status: 400,
@@ -88,6 +80,7 @@ export const UpdateGroupService = async (req) => {
   const image = req.file;
   const body = req.body;
   const { membersIds } = body;
+
   let imagePath = null;
   const newImagePath = image
     ? path.join("uploads/images", image.filename)

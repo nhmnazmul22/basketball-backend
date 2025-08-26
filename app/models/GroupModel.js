@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 // Define DataSchema
 const DataSchema = new mongoose.Schema(
   {
-    logo: { type: String, required: true },
+    logo: { type: String},
     groupName: { type: String, required: true },
     description: { type: String },
     status: {

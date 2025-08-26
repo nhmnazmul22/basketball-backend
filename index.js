@@ -21,7 +21,7 @@ import {
   WEB_CACHE,
 } from "./app/config/config.js";
 import { createServer } from "http";
-import socketConnection from "./app/lib/socket.js"
+import { CreateMessageService } from "./app/services/MessageService.js";
 
 // Manually create __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -78,7 +78,25 @@ mongoose
 
 
   // Socket io connection
-  io.on("connection", socketConnection)
+io.on("connection", (socket) => {
+  console.log("A user connected on socket.io");
+
+  socket.on("group message", async (messageObj) => {
+    try {
+      // Save message in DB
+      const savedMessage = await CreateMessageService(messageObj);
+
+      // Populate sender info (assuming `senderId` is a ref to User)
+      const populatedMessage = await savedMessage.populate("senderId", "username avatar");
+
+      // Emit populated message to all clients in group
+      io.emit("group message", populatedMessage);
+    } catch (err) {
+      console.error("Error saving message:", err);
+      socket.emit("error", { message: "Message not saved" });
+    }
+  });
+});
 
 // ---- Cron Job for Automatic Notifications ----
 // Runs every day at 10:00 AM

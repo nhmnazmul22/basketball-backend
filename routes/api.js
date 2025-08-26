@@ -8,6 +8,7 @@ import * as PostController from "../app/controllers/PostController.js";
 import * as ReportController from "../app/controllers/ReportController.js";
 import * as NotificationController from "../app/controllers/NotificationController.js";
 import * as TransactionController from "../app/controllers/TransactionController.js";
+import * as MessageController from "../app/controllers/MessageController.js"
 import { upload } from "../app/middleware/UploadMiddleware.js";
 import { AuthVerify } from "../app/middleware/AuthMiddleware.js";
 
@@ -124,5 +125,8 @@ router.put(
   "/update-transaction/:transactionId",
   TransactionController.UpdateTransactionController
 );
+
+// Message Routes
+router.get("/messages/:groupId", MessageController.GetAllMessageController)
 
 export default router;
