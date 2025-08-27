@@ -160,8 +160,8 @@ export const CreateAbsenseService = async (req) => {
   try {
 
     const body = req.body;
-    const {studnetId} = body;
-    const existUser = await UserModel.findById(studnetId);
+    const {studentId} = body;
+    const existUser = await UserModel.findById(studentId);
 
     if(!existUser){
       return {
@@ -172,7 +172,7 @@ export const CreateAbsenseService = async (req) => {
     }
   
     const attendanceObj = {
-      studentId: studnetId,
+      studentId: studentId,
       teamId: existUser.teamId,
       status: "absen",
       gps: false,
