@@ -55,6 +55,7 @@ router.post(
   AttendanceController.CreateAttendanceController
 );
 router.get("/attendances", AttendanceController.GetAllAttendanceController);
+router.post("/create-absen", AttendanceController.CreateAbsensControllers)
 
 // Announcement Routes
 router.post(

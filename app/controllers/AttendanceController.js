@@ -14,3 +14,11 @@ export const GetAllAttendanceController = async (req, res) => {
     .status(result.status)
     .json({ message: result.message, data: result.data });
 };
+
+
+export const CreateAbsensController = async (req, res) => {
+  const result = await AttendanceService.CreateAbsenseService(req);
+  return res
+    .status(result.status)
+    .json({ message: result.message, data: result.data });
+};

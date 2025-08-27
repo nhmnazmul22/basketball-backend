@@ -1,7 +1,5 @@
 import { convertObjectId, removeExistingFile } from "../lib/utility.js";
 import PostModel from "../models/PostModel.js";
-import TeamModel from "../models/TeamModel.js";
-import path from "path";
 
 export const CreatePostService = async (req) => {
   try {

@@ -67,7 +67,7 @@ export const CreateAttendanceService = async (req) => {
     const attendanceObj = {
       studentId: matchFound._id,
       teamId: matchFound.teamId,
-      status: "present",
+      status: "hadiah",
       gps: true,
       faceMatch: true,
     };
@@ -150,6 +150,49 @@ export const GetAllAttendanceService = async (req) => {
       status: 200,
       message: "Attendance records found",
       data: attendances,
+    };
+  } catch (err) {
+    return { status: 500, message: err.message || "Server issue", data: null };
+  }
+};
+
+export const CreateAbsenseService = async (req) => {
+  try {
+
+    const body = req.body;
+    const {studnetId} = body;
+    const existUser = await UserModel.findById(studnetId);
+
+    if(!existUser){
+      return {
+        status: 404,
+        message: "Student not found",
+        data: null
+      }
+    }
+  
+    const attendanceObj = {
+      studentId: studnetId,
+      teamId: existUser.teamId,
+      status: "absen",
+      gps: false,
+      faceMatch: false,
+    };
+
+    const attendance = await AttendanceModel.create(attendanceObj);
+
+    if (!attendance) {
+      return {
+        status: 500,
+        message: "Absen create failed, server issue",
+        data: null,
+      };
+    }
+
+    return {
+      status: 200,
+      message: "Abesen created successfully",
+      data: attendance,
     };
   } catch (err) {
     return { status: 500, message: err.message || "Server issue", data: null };
