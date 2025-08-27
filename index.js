@@ -22,6 +22,7 @@ import {
 } from "./app/config/config.js";
 import { createServer } from "http";
 import { CreateMessageService } from "./app/services/MessageService.js";
+import { GetUserByIdService } from "./app/services/UserServices.js";
 
 // Manually create __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -84,13 +85,16 @@ io.on("connection", (socket) => {
   socket.on("group message", async (messageObj) => {
     try {
       // Save message in DB
-      const savedMessage = await CreateMessageService(messageObj);
-
-      // Populate sender info (assuming `senderId` is a ref to User)
-      const populatedMessage = await savedMessage.populate("senderId", "username avatar");
-
+      await CreateMessageService(messageObj);
+      const user = await GetUserByIdService({headers: {userId: messageObj.senderId}});
+      if(user){
+        const newMessageObj = {
+        avater: user.data.profilePicture || "",
+        ...messageObj
+      }
       // Emit populated message to all clients in group
-      io.emit("group message", populatedMessage);
+      io.emit("group message", newMessageObj);
+      }
     } catch (err) {
       console.error("Error saving message:", err);
       socket.emit("error", { message: "Message not saved" });
